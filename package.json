@@ -1,0 +1,29 @@
+{
+  "scripts": {
+    "build": "browserify -v main.js > public/bundle.js",
+    "watch": "watchify main.js -o public/bundle.js -dv",
+    "start": "ecstatic public -p 5000"
+  },
+  "name": "sparql-table-spec",
+  "version": "1.0.0",
+  "description": "takes a spec object for a table and outputs sparql string",
+  "main": "main.js",
+  "devDependencies": {
+    "browserify": "^14.1.0",
+    "watchify": "^3.9.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/kwijibo/sparql-table-spec.git"
+  },
+  "keywords": [
+    "SPARQL",
+    "generation"
+  ],
+  "author": "Keith Alexander",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kwijibo/sparql-table-spec/issues"
+  },
+  "homepage": "https://github.com/kwijibo/sparql-table-spec#readme"
+}
