@@ -1,6 +1,25 @@
+//TODO
+// add max min count etc functions
+// validation of spec object
+//
+//
+// Spec:: {
+//  namespaces: {Prefix: URI},
+//  filters: [{ (uri | literal | lang | datatype): [{path: Path, value: String}]}],
+//  views: [{path: Path, name: String}],
+//  sorts: [{path:Path, order: DESC | ASC}],
+//  page: {number: PositiveInteger, size: PositiveInteger}
+// }
+// Path:: [{property: String, optional: Boolean, inverse: Boolean}]
+//
 module.exports = function sparqlTable (spec){
     const {clauses, columns} = view(spec.views)
     const {limit, offset} = page(spec.page)
+    const sortClause = spec.sorts.map(({path}, i) => pathProperties(path, '?_sortValue'+i, '')).join('\n')
+    const orderBy = spec.sorts.length?
+       `ORDER BY ${spec.sorts.map(({order}, i) => `${order}(?_sortValue${i})`).join('\t')}`
+    : ''
+
     return `${prefixes(spec.namespaces)}
 SELECT ?item ${columns.join(' ')}
 WHERE {
@@ -17,7 +36,9 @@ WHERE {
      ).join('} UNION {')} 
  }
  ${clauses}
+ ${sortClause} 
 }
+${orderBy}
 ${limit >=1? `LIMIT ${limit}`: ''}
 ${offset >=0? `OFFSET ${offset}`: ''}
 `
@@ -25,7 +46,7 @@ ${offset >=0? `OFFSET ${offset}`: ''}
 
 function page({number, size}) {
     const limit = size
-    const offset = 0
+    const offset = (number * size) - ((number>1)? size + 1 : size)
     return {limit, offset}
 }
 
