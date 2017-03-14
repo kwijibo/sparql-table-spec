@@ -78,3 +78,23 @@ Spec:: {
 Path:: [{property: String, optional: Boolean, inverse: Boolean}]
 
 ```
+
+### Namespaces
+
+Namespaces is a mapping of _prefixes_ to URI namespaces. This allows you to use the abbreviated form of URIs, eg `foaf:Person` instead of `http://xmlns.com/foaf/0.1/Person` (only abbreviated URIs are currently supported).
+
+### Page
+
+This allows you to define how many results per page should be fetched (`page.size`), and which page of results to fetch (`page.number`)
+
+### Filters
+
+_Filters_ allows you to define constraints on your result set. Given `filters: [{ literals: [filterLA, filterLB]}]` _both_ must match.
+But given `filters: [filterX, filterY]`, either `filterX` or `filterY` may match.
+
+### Views
+_Views_ are the columns which should appear in the table
+
+## Sorts
+
+_Sorts_ is the order by which results should be ordered.
