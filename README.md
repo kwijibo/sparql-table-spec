@@ -39,23 +39,23 @@ WHERE {
  { 
      ?item rdf:type ex:PunkRocker .
 	    
-ex:Johnny foaf:knows ?item .
+     ex:Johnny foaf:knows ?item .
 	    
-	OPTIONAL {
+     OPTIONAL {
 	    ?item foaf:name """Sheena""" .
 	    
-	} 
+     } 
  }
  OPTIONAL {
 	    ?item foaf:knows ?foaf_knows .
 	    ?foaf_knows foaf:name ?name .
 	    
-	}
- ?item foaf:knows ?foaf_knows .
-	    OPTIONAL {
-	    ?foaf_knows foaf:name ?_sortValue0 .
-	    
-	} 
+  }
+ 
+  ?item foaf:knows ?foaf_knows .
+  OPTIONAL {
+    ?foaf_knows foaf:name ?_sortValue0 .	    
+  } 
 }
 ORDER BY DESC(?_sortValue0)
 LIMIT 50
