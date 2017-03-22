@@ -1,9 +1,10 @@
-const sparqlTable = require('./main.js')
+const sparqlTable = require('../main.js')
 
 const output = sparqlTable({
     namespaces: {
         foaf: "http://xmlns.com/foaf/0.1/",
-        ex: "http://example.info/vocab/"
+        ex: "http://example.info/vocab/",
+        rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     },
     filters: [ {
         literals: [
@@ -16,7 +17,7 @@ const output = sparqlTable({
         ]
     }],
     views: [
-        { path: [{property: "foaf:knows", optional: true}, {property: "foaf:name"}], name: "name"}
+        { path: [{property: "foaf:knows", optional: true}, {property: "foaf:name"}], name: "name", funcs: ["COUNT", "DISTINCT"]}
     ],
     page: {number: 2, size: 50},
     sorts: [{ path: [{property: "foaf:knows", inverse: false }, {property: "foaf:name", optional: true}], order: "DESC"  }]

@@ -1,12 +1,7 @@
-//TODO
-// add max min count etc functions
-// validation of spec object
-//
-//
 // Spec:: {
 //  namespaces: {Prefix: URI},
 //  filters: [{ (uri | literal | lang | datatype): [{path: Path, value: String}]}],
-//  views: [{path: Path, name: String}],
+//  views: [{path: Path, name: String, funcs: [String]}],
 //  sorts: [{path:Path, order: DESC | ASC}],
 //  page: {number: PositiveInteger, size: PositiveInteger}
 // }
@@ -19,25 +14,31 @@ module.exports = function sparqlTable (spec){
     const orderBy = spec.sorts.length?
        `ORDER BY ${spec.sorts.map(({order}, i) => `${order}(?_sortValue${i})`).join('\t')}`
     : ''
+    const groupBy = 
+        spec.views.some(x=>x.funcs.length)?
+        'GROUP BY ' + ['?item'].concat(
+            spec.views.filter(x=>!x.hasOwnProperty('funcs')).map(x=>varize(x.name))
+        ).join(' ')
+    : ''
 
     return `${prefixes(spec.namespaces)}
 SELECT ?item ${columns.join(' ')}
 WHERE {
- { 
-     ${spec.filters.map(f => 
-        [f.uris
-         .map(filterUris)
-         .join('\n') 
-        ,
-        f.literals
-         .map(filterLiteral)
-         .join('\n')
-        ].join('\n\t')
-     ).join('} UNION {')} 
- }
+ ${spec.filters.map(f => 
+    [f.uris
+     .map(filterUris)
+     .join('\n') 
+    ,
+    f.literals
+     .map(filterLiteral)
+     .join('\n')
+    ].join('\n\t')
+ ).map(s => `{ ${s} }`).join(' UNION ')} 
+ 
  ${clauses}
  ${sortClause} 
 }
+${groupBy}
 ${orderBy}
 ${limit >=1? `LIMIT ${limit}`: ''}
 ${offset >=0? `OFFSET ${offset}`: ''}
@@ -58,11 +59,17 @@ function prefixes(namespaces){
 }
 
 function view(views){
-   const columns = views.map(x=>varize(x.name)) 
+   const columns = views.map(columnize) 
    const clauses = views
-        .map(x => pathProperties(x.path, '?'+ x.name, '' ))
+        .map(x => pathProperties(x.path, varizeWithFunctions(x.name, x.funcs), '' ))
         
    return  {columns, clauses} 
+}
+
+function columnize(x){
+    return x.funcs? 
+        `(${x.funcs.reduceRight((prev, curr) => `${curr}(${prev})`, varizeWithFunctions(x.name, x.funcs))} AS ${varize(x.name)})`
+        : varize(x.name)
 }
 
 function filterLiteral ({path, value}){
@@ -74,6 +81,9 @@ function filterUris ({path, value}){
 
 
 const varize = x => '?' + x.replace(':','_')
+
+const varizeWithFunctions = (x, funcs) => varize(x) + (funcs? '__0' : '')
+
 
 function pathProperties (path, finalVal, lastSparql){
   lastSparql = lastSparql || ''

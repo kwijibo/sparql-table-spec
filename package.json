@@ -1,8 +1,7 @@
 {
   "scripts": {
     "build": "browserify -v main.js > public/bundle.js",
-    "watch": "watchify main.js -o public/bundle.js -dv",
-    "start": "ecstatic public -p 5000"
+    "watch": "watchify main.js -o public/bundle.js -dv"
   },
   "name": "sparql-table-spec",
   "version": "1.0.0",
