@@ -47,7 +47,7 @@ ${offset >=0? `OFFSET ${offset}`: ''}
 
 function page({number, size}) {
     const limit = size
-    const offset = (number * size) - ((number>1)? size + 1 : size)
+    const offset = number * size - size
     return {limit, offset}
 }
 
