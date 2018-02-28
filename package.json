@@ -4,7 +4,7 @@
     "watch": "watchify main.js -o public/bundle.js -dv"
   },
   "name": "sparql-table-spec",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "takes a spec object for a table and outputs sparql string",
   "main": "main.js",
   "devDependencies": {
