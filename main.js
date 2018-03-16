@@ -42,7 +42,7 @@ WHERE {
    .map(s => `{ ${s} }`)
    .join(' UNION ')} 
  
- ${clauses}
+ ${clauses.join('\n')}
  ${sortClause} 
 }
 ${groupBy}
