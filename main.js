@@ -32,18 +32,19 @@ module.exports = function sparqlTable(spec) {
   return `${prefixes(spec.namespaces)}
 SELECT ?item ${columns.join(' ')}
 WHERE {
- ${spec.filters
-   .map(f =>
-     [
-       f.uris.map(filterUris).join('\n'),
-       f.literals.map(filterLiteral).join('\n'),
-     ].join('\n\t'),
-   )
-   .map(s => `{ ${s} }`)
-   .join(' UNION ')} 
+
+${spec.filters
+    .map(f =>
+      [
+        f.uris.map(filterUris).join('\n'),
+        f.literals.map(filterLiteral).join('\n'),
+      ].join('\n'),
+    )
+    .map(s => `{ ${s} }`)
+    .join(' UNION ')} 
  
- ${clauses.join('\n')}
- ${sortClause} 
+${clauses.join('\n')}
+${sortClause} 
 }
 ${groupBy}
 ${orderBy}
@@ -86,8 +87,10 @@ function filterLiteral({path, value}) {
   return pathProperties(path, `"""${value}"""`, '')
 }
 function filterUris({path, value}) {
-  return pathProperties(path, `${value}`, '')
+  return pathProperties(path, `${wrapUri(value)}`, '')
 }
+
+const wrapUri = uri => (uri.indexOf('/') > -1 ? `<${uri}>` : uri)
 
 const varize = x => '?' + x.replace(':', '_')
 
@@ -105,11 +108,11 @@ function pathProperties(path, finalVal, lastSparql) {
     const triple = curr.inverse
       ? `${object} ${curr.property} ${subject}`
       : `${subject} ${curr.property} ${object}`
-    const sparql = `${triple} .\n\t    ${lastSparql}`
+    const sparql = `  ${triple} .\n${lastSparql}`
     return pathProperties(
       rest,
       false,
-      curr.optional ? `OPTIONAL {\n\t    ${sparql}\n\t}` : sparql,
+      curr.optional ? `OPTIONAL {\n  ${sparql}\n}` : sparql,
     )
   }
 }
