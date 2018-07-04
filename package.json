@@ -1,7 +1,9 @@
 {
   "scripts": {
     "build": "browserify -v main.js > public/bundle.js",
-    "watch": "watchify main.js -o public/bundle.js -dv"
+    "watch": "watchify main.js -o public/bundle.js -dv",
+    "test": "node tests.js"
+
   },
   "name": "sparql-table-spec",
   "version": "1.0.3",
@@ -24,5 +26,8 @@
   "bugs": {
     "url": "https://github.com/kwijibo/sparql-table-spec/issues"
   },
-  "homepage": "https://github.com/kwijibo/sparql-table-spec#readme"
+  "homepage": "https://github.com/kwijibo/sparql-table-spec#readme",
+  "dependencies": {
+    "tape": "^4.9.1"
+  }
 }
