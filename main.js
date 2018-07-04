@@ -41,7 +41,7 @@ module.exports = function sparqlTable(spec) {
     : ''
 
   return `${prefixes(spec.namespaces)}
-SELECT 
+SELECT DISTINCT 
     ?item 
     ${columns.join(' \n    ')}
 WHERE {
