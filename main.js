@@ -53,7 +53,7 @@ ${spec.filters
         f.literals.map(filterLiteral).join('\n'),
       ].join('\n'),
     )
-    .map(s => `{ ${s} }`)
+    .map(s => spec.filters.length > 1? `{ ${s} }` : s)
     .join(' UNION ')} 
  
 ${clauses.join('\n')}
