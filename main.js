@@ -45,23 +45,25 @@ SELECT DISTINCT
     ?item 
     ${columns.join(' \n    ')}
 WHERE {
-
-${spec.filters
-    .map(f =>
-      [
-        f.uris.map(filterUris).join('\n'),
-        f.literals.map(filterLiteral).join('\n'),
-      ].join('\n'),
-    )
-    .map(s => spec.filters.length > 1? `{ ${s} }` : s)
-    .join(' UNION ')} 
- 
+    { SELECT DISTINCT ?item WHERE {
+        ${spec.filters
+            .map(f =>
+              [
+                f.uris.map(filterUris).join('\n'),
+                f.literals.map(filterLiteral).join('\n'),
+              ].join('\n'),
+            )
+            .map(s => spec.filters.length > 1? `{ ${s} }` : s)
+            .join(' UNION ')} 
+            
+        ${sortClause} 
+    }
+     ${orderBy}
+     ${limit >= 1 ? `LIMIT ${limit}` : ''}
+     ${offset >= 0 ? `OFFSET ${offset}` : ''}
+    }
 ${clauses.join('\n')}
-${sortClause} 
 }
 ${groupBy}
-${orderBy}
-${limit >= 1 ? `LIMIT ${limit}` : ''}
-${offset >= 0 ? `OFFSET ${offset}` : ''}
 `
 }

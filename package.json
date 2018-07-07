@@ -6,7 +6,7 @@
 
   },
   "name": "sparql-table-spec",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "takes a spec object for a table and outputs sparql string",
   "main": "main.js",
   "devDependencies": {
