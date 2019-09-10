@@ -38,7 +38,7 @@ function columnize(x) {
 }
 
 function filterLiteral({path, value}) {
-  return pathProperties(path, `"""${value}"""`, '')
+  return pathProperties(path, `"""${escapeSparqlLiteral(value)}"""`, '')
 }
 function filterUris({path, value}) {
   return pathProperties(path, `${wrapUri(value)}`, '')
@@ -70,6 +70,14 @@ function pathProperties(path, finalVal, lastSparql) {
     )
   }
 }
+
+function escapeSparqlLiteral(val){
+  return String(val) //cast as String in case value is a Number, Boolean etc
+          .replace(/\\/g, "\\\\") //escape SPARQL escape char (also js escape char, so we have to 2x \ )
+          .replace(/([^\\])?"$/g,'$1\\"'); //escape the final char if it's 
+          //an unescaped " as JENA doesn't like this, tho seems it should be fine in Long Literals...
+}
+
 module.exports = {
     view, page, pathProperties, varize, filterUris, filterLiteral, prefixes
 }
